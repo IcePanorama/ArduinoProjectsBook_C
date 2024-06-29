@@ -3,10 +3,9 @@
 All the projects from the [Arduino Projects Book](https://store-usa.arduino.cc/products/arduino-starter-kit-multi-language), written in C.
 
 ## Building and running
-Each project is separated into its own folder, with each folder having its own makefile. To run a particular project, clone the repo onto your machine, cd into the corresponding directory, run `make` to build the executable, and then run the program using the following command:
-```bash
-./<PROJECT_NAME>
-```
+Each project is separated into its own folder, with each folder having its own makefile. To run a particular project, clone the repo onto your machine, cd into the corresponding directory, run `make` to build the executable, and then flash the program onto your Arduino using the `make flash` command.
+
+**NOTE**: Please double check which port your Arduino is located on using `ls /dev/ | grep ACM` then set the `PORT` variable in that project's `Makefile` to the output of that command.
 
 In order to build and run these projects, you will need the following libraries installed on your machine: `avr-binutils`, `avr-gcc`, `avrdude`, and `avr-libc`.
 

@@ -32,7 +32,7 @@ flash: $(HEX)
 	sudo $(AVRDUDE) -F -V -c arduino -p $(MCU) -P $(PORT) -b $(BAUD_RATE) -U flash:w:$(HEX)
 
 clean:
-	rm -f $(OBJS) $(BIN) $(HEX)
+	rm -f $(OBJ) $(BIN) $(HEX)
 
 format:
 	$(FMT) $(CFFLAGS) -i $(SRC) $(INCL)
