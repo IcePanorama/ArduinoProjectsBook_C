@@ -19,10 +19,10 @@ main (void)
  *  Setup
  *
  *  Configures Port D as follows:
- *    * DDR2 (PORTD2) as input for switch
+ *    * DDD2 (PORTD2) as input for switch
  *    * DDD3 (PORTD3) as output for green LED
- *    * DDR4 (PORTD4) as output for first red LED
- *    * DDR5 (PORTD5) as output for second red LED
+ *    * DDD4 (PORTD4) as output for first red LED
+ *    * DDD5 (PORTD5) as output for second red LED
  *
  */
 void
