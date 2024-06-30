@@ -1,5 +1,8 @@
 #include <avr/io.h>
+#include <stdint.h>
 #include <util/delay.h>
+
+const uint16_t DELAY_TIME = 1000;
 
 int
 main (void)
@@ -8,9 +11,9 @@ main (void)
 
   while (1)
     {
-      PORTB = PORTB | (1 << PORTB5);
-      _delay_ms (1000);
-      PORTB = PORTB & ~(1 << PORTB5);
-      _delay_ms (1000);
+      PORTB |= (1 << PORTB5);
+      _delay_ms (DELAY_TIME);
+      PORTB &= ~(1 << PORTB5);
+      _delay_ms (DELAY_TIME);
     }
 }

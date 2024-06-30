@@ -7,8 +7,8 @@ F_CPU = 16000000UL
 BAUD_RATE = 115200
 PORT = /dev/ttyACM0
 
-CFLAGS = -Os -DF_CPU=$(F_CPU) -mmcu=$(MCU) -c
-LDFLAGS =
+CFLAGS = -O1 -std=c99 -Wpedantic -Wextra -Werror -Wall -Wstrict-aliasing=3 -Wwrite-strings -Wvla -Wcast-align=strict -Wstrict-prototypes -Wstringop-overflow=4 -Wshadow -fanalyzer -DF_CPU=$(F_CPU) -mmcu=$(MCU) -c
+LDFLAGS = -DF_CPU=$(F_CPU) -mmcu=$(MCU)
 
 TARGET = HelloWorld
 SRC_DIR=src
@@ -24,8 +24,8 @@ CFFLAGS = -style=$(STYLE)
 all: clean format $(HEX)
 
 $(HEX): $(OBJS)
-	$(CC) $(CFLAGS) $(SRC) #-o $(OBJS) 
-	$(CC) -o $(BIN) $(OBJ)
+	$(CC) $(CFLAGS) $(SRC) -o $(OBJ) 
+	$(CC) -o $(BIN) $(OBJ) $(LDFLAGS)
 	$(OBJCOPY) -O ihex -R .eeprom $(BIN) $(HEX)
 
 flash: $(HEX)
