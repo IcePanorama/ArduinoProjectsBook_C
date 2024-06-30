@@ -40,5 +40,8 @@ erase:
 	# Clear the Arduino's flash memory
 	-@sudo $(AVRDUDE) -F -V -c arduino -p $(MCU) -P $(PORT) -b $(BAUD_RATE) -e
 
+connect:
+	sudo cu -l /dev/ttyACM0 -s 9600
+
 format:
 	$(FMT) $(CFFLAGS) -i $(SRC) $(INCL)
