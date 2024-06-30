@@ -86,15 +86,19 @@ uart_send_array (uint8_t *arr, uint16_t length)
 void
 uart_send_string (const uint8_t *str)
 {
-  // when str is NULL, won't this send '\0' twice?
-  // Look into just using a for loop instead
   uint16_t i = 0;
-  do
+
+  // small optimization for when str is emtpy
+  // (avoids sending null character twice)
+  if (str[i] != '\0')
     {
-      uart_send_byte (str[i]);
-      i++;
+      do
+        {
+          uart_send_byte (str[i]);
+          i++;
+        }
+      while (str[i] != '\0');
     }
-  while (str[i] != '\0');
 
   // transmit null character also
   uart_send_byte (str[i]);
