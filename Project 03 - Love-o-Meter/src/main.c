@@ -1,8 +1,11 @@
-#include "uart_hal.h"
+/* clang-format off */
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stdint.h>
 #include <util/delay.h>
+
+#include "uart_hal.h"
+/* clang-format on */
 
 // A0 | D14 - PC0 - ADC[0] (default)
 static const uint32_t BAUD_RATE = 9600;
@@ -17,22 +20,20 @@ main (void)
   //  const float BASELINE_TMP = 20.0;
   // setup ();
 
+  const uint8_t START_MSG[] = "Connection Start:\n\r";
   uint8_t data = 'A';
   uart_init (BAUD_RATE, 0);
 
   sei ();
+  uart_send_string (START_MSG);
   while (1)
     {
-      uart_send_byte (data);
-      _delay_ms (500);
-
-      data++;
-      if (data > 'Z')
+      if (uart_read_count () > 0)
         {
-          data = 'A';
+          data = uart_read ();
+          uart_send_byte (data);
         }
     }
-
   return 0;
 }
 

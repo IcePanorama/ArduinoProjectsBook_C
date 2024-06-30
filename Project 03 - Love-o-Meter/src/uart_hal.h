@@ -52,8 +52,23 @@ void uart_send_array (uint8_t *arr, uint16_t length);
  *  connection using the uart_send_byte function.
  *
  *  params:
- *    str : uint8_t* - the desired string to transmit
+ *    str : const uint8_t* - the desired string to transmit
  */
-void uart_send_string (uint8_t *str);
+void uart_send_string (const uint8_t *str);
+
+/*
+ *  uart_read_count
+ *
+ *  returns:
+ *    uint16_t - the number of received bytes which have yet to be read.
+ */
+uint16_t uart_read_count (void);
+
+/*
+ *  uart_read_count
+ *
+ *  Reads the recieved data into the rx_buffer.
+ */
+uint8_t uart_read (void);
 
 #endif

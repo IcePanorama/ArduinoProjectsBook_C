@@ -1,16 +1,35 @@
-#include "uart_hal.h"
+/* clang-format off */
 #include <avr/interrupt.h>
 
+#include "uart_hal.h"
+/* clang-format on */
+
+#define RX_BUFFER_SIZE 128
+#define USART_IO_DATA_REGISTER UDR0
+
+/* a circular buffer for storing received data */
+static volatile uint8_t rx_buffer[RX_BUFFER_SIZE] = { 0 };
+
+static volatile uint16_t rx_count = 0;
 static volatile uint8_t uart_tx_busy = 0;
 
-/*
- *  USART RX Complete Interrupt
- */
-ISR (USART_RX_vect) {}
+/* USART RX Complete Interrupt */
+ISR (USART_RX_vect)
+{
+  static volatile uint16_t rx_write_pos = 0;
 
-/*
- *  USART TX Complete Interrupt
- */
+  // NOTE: a circular buffer might
+  // not always be desirable.
+  rx_buffer[rx_write_pos] = USART_IO_DATA_REGISTER;
+  rx_count++;
+  rx_write_pos++;
+  if (rx_write_pos >= RX_BUFFER_SIZE)
+    {
+      rx_write_pos = 0;
+    }
+}
+
+/* USART TX Complete Interrupt */
 ISR (USART_TX_vect) { uart_tx_busy = 0; }
 
 void
@@ -21,7 +40,7 @@ uart_init (uint32_t baud, uint8_t high_speed)
   if (high_speed)
     {
       speed = 8;
-      // set the flag for double USART transmission speed
+      // sets the flag for double USART transmission speed
       UCSR0A |= 1 << U2X0;
     }
 
@@ -35,7 +54,8 @@ uart_init (uint32_t baud, uint8_t high_speed)
   UBRR0L = (baud & 0x00FF);
 
   /*
-   *  Enables the following flags on the USART Control and Status Register 0 B:
+   *  Enables the following flags on the USART Control
+   *  and Status Register 0 B:
    *    * RX Complete Interrupt Enable (RXCIE0)
    *    * TX Complete Interrupt Enable (TXCIE0)
    *    * Trasmitter Enable (TXEN0)
@@ -51,8 +71,7 @@ uart_send_byte (uint8_t b)
     ;
   uart_tx_busy = 1;
 
-  // UDR0 = tx byte
-  UDR0 = b;
+  USART_IO_DATA_REGISTER = b;
 }
 
 void
@@ -65,7 +84,7 @@ uart_send_array (uint8_t *arr, uint16_t length)
 }
 
 void
-uart_send_string (uint8_t *str)
+uart_send_string (const uint8_t *str)
 {
   // when str is NULL, won't this send '\0' twice?
   // Look into just using a for loop instead
@@ -79,4 +98,27 @@ uart_send_string (uint8_t *str)
 
   // transmit null character also
   uart_send_byte (str[i]);
+}
+
+uint16_t
+uart_read_count (void)
+{
+  return rx_count;
+}
+
+uint8_t
+uart_read (void)
+{
+  static uint16_t rx_read_pos = 0;
+  uint8_t data = 0;
+
+  data = rx_buffer[rx_read_pos];
+  rx_read_pos++;
+  rx_count--;
+  if (rx_read_pos >= RX_BUFFER_SIZE)
+    {
+      rx_read_pos = 0;
+    }
+
+  return data;
 }
