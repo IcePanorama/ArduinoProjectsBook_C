@@ -77,6 +77,7 @@ main_loop (void)
   // const float BASELINE_TMP = 20.0;
   const uint8_t sensor_value_label[] = "Sensor value: ";
   const uint8_t voltage_label[] = "Voltage: ";
+  const uint8_t temperature_label[] = "Temperature (C): ";
 
   while (1)
     {
@@ -95,6 +96,15 @@ main_loop (void)
 
       float voltage = (sensor_value / 1024.0f) * 5.0f;
       ftoa (voltage, output, 2);
+      len = strlen ((char *)output);
+      output[len] = '\t';
+      output[len + 1] = '\0';
+      uart_send_string (output);
+
+      uart_send_string (temperature_label);
+
+      float temperature = (voltage - 0.5) * 100;
+      ftoa (temperature, output, 2);
       len = strlen ((char *)output);
       output[len] = '\n';
       output[len + 1] = '\r';
