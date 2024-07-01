@@ -10,7 +10,7 @@ Each project is separated into its own folder, with each folder having its own m
 In order to build and run these projects, you will need the following libraries installed on your machine: `avr-binutils`, `avr-gcc`, `avrdude`, and `avr-libc`.
 
 ## Background
-As someone with an interest in computer engineering, low-level programming, and embedded systems, I'm using this project as an opportunity to get work closer to the bare-metal of the Arduino Uno. This project was started in the hopes that it could be a stepping stone for me towards working with more professional/industry-grade boards (like the STM32 boards) in the future.
+As someone with an interest in computer engineering, low-level programming, and embedded systems, I'm using this project as an opportunity to work closer to the bare-metal of the Arduino Uno. This project was started in the hopes that it could be a stepping stone for me towards working with more professional/industry-grade boards (like the STM32 boards) in the future.
 
 ## Specs
 * **Microcontroller**: ATmega328P @ 16 MHz
