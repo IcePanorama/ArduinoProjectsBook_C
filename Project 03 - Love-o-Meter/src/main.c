@@ -6,8 +6,13 @@
 #include <string.h>
 #include <util/delay.h>
 
+#include "adc.h"
 #include "uart_hal.h"
 /* clang-format on */
+
+// max value of uint16_t is 65535 (5 digits)
+// + '\n' (1 = 6) + '\r' (1 = 7) + '\0' (1 = 8)
+#define SENSOR_VALUE_STR_MAX_LEN 8
 
 void setup_love_o_meter (void);
 void setup_serial_connection (void);
@@ -62,18 +67,27 @@ main_loop (void)
   //  do it either at startup or on a button press
   // const float BASELINE_TMP = 20.0;
   const uint8_t label[] = "Sensor value: ";
+  const uint8_t err_txt[] = "err\n\r";
 
   while (1)
     {
-      uint8_t sensor_value = PINC & (1 << PINC0);
       uart_send_string (label);
-      uint8_t str_val[7];
-      utoa (sensor_value, (char *)str_val, 10);
-      uint8_t len = strlen ((char *)str_val);
-      str_val[len] = '\n';
-      str_val[len + 1] = '\r';
-      str_val[len + 2] = '\0';
-      uart_send_string (str_val);
+
+      if (adc_init (ADC_AVCC, 1, ADC_CHANNEL_0, ADC_PRESCALE_BY_128)
+          != ADC_INIT_SUCCESS)
+        {
+          uart_send_string (err_txt);
+          continue;
+        }
+
+      uint16_t sensor_value = adc_start (1);
+      uint8_t output[SENSOR_VALUE_STR_MAX_LEN];
+      itoa (sensor_value, (char *)output, 10);
+      uint8_t len = strlen ((char *)output);
+      output[len] = '\n';
+      output[len + 1] = '\r';
+      output[len + 2] = '\0';
+      uart_send_string (output);
 
       _delay_ms (1000);
     }

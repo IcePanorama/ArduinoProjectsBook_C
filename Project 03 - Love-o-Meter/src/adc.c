@@ -1,67 +1,51 @@
 #include <avr/io.h>
-#include <stdint.h>
 
-int adc_init (uint8_t voltage_selection, uint8_t right_adjusted,
-              uint8_t adc_channel_selection, uint8_t adc_prescaler_selection);
-static uint8_t adc_init_voltage_selection (uint8_t selection);
+#include "adc.h"
+
 static uint8_t is_valid_adc_channel (uint8_t c);
-static void adc_init_channel_selection (uint8_t selection);
 static uint8_t is_valid_adc_prescaler (uint8_t p);
-static void adc_init_prescaler_selection (uint8_t selection);
+static uint8_t adc_busy (void);
 
-enum adc_init_result
-{
-  ADC_INIT_SUCCESS,
-  ADC_INIT_INVALID_VOLTAGE_SELECTION,
-  ADC_INIT_INVALID_CHANNEL_SELECTION,
-  ADC_INIT_INVALID_PRESCALER_SELECTION
-};
-
-enum high_voltage_selection
-{
-  AREF,
-  AVCC,
-  INTERNAL_REF
-};
-
-/* clang-format off */
-enum adc_channel_options
-{
-  ADC_CHANNEL_0   = 0x0,  // 0b0000
-  ADC_CHANNEL_1   = 0x1,  // 0b0001
-  ADC_CHANNEL_2   = 0x2,  // 0b0010
-  ADC_CHANNEL_3   = 0x3,  // 0b0011
-  ADC_CHANNEL_4   = 0x4,  // 0b0100
-  ADC_CHANNEL_5   = 0x5,  // 0b0101
-  ADC_CHANNEL_6   = 0x6,  // 0b0110
-  ADC_CHANNEL_7   = 0x7,  // 0b0111
-  ADC_CHANNEL_8   = 0x8,  // 0b1000
-  ADC_CHANNEL_1v1 = 0xE,  // 0b1110
-  ADC_CHANNEL_GND = 0xF   // 0b1111
-};
-
-enum adc_prescaler_options
-{
-  ADC_PRESCALE_BY_2   = 0x0,  // 0b000 or 0b001 (both work)
-  ADC_PRESCALE_BY_4   = 0x2,  // 0b010
-  ADC_PRESCALE_BY_8   = 0x3,  // 0b011
-  ADC_PRESCALE_BY_16  = 0x4,  // 0b100
-  ADC_PRESCALE_BY_32  = 0x5,  // 0b101
-  ADC_PRESCALE_BY_64  = 0x6,  // 0b110
-  ADC_PRESCALE_BY_128 = 0x7,  // 0b111
-};
-/* clang-format on */
-
-int
+uint8_t
 adc_init (uint8_t voltage_selection, uint8_t right_adjusted,
           uint8_t adc_channel_selection, uint8_t adc_prescaler_selection)
 {
-  if (adc_init_voltage_selection (voltage_selection)
-      == ADC_INIT_INVALID_VOLTAGE_SELECTION)
+  // Disable power reduction ADC bit
+  PRR &= ~(1 << PRADC);
+
+  // makes sure adc isn't in use
+  // before changing settings
+  while (adc_busy ())
+    ;
+
+  /*
+   *  Sets the reference selection bits in
+   *  the ADC Multiplex Selection Register.
+   *  See 23.9.1 ADMUX – ADC Multiplexer
+   *  Selection Register, Bit 7:6 (pg. 217)
+   *  for more details.
+   */
+  switch (voltage_selection)
     {
+    case ADC_AREF:
+      ADMUX &= ~((1 << REFS1) | (1 << REFS0));
+      break;
+    case ADC_AVCC:
+      ADMUX &= ~(1 << REFS1);
+      ADMUX |= (1 << REFS0);
+      break;
+    case ADC_INTERNAL_REF:
+      ADMUX |= (1 << REFS1) | (1 << REFS0);
+      break;
+    default:
       return ADC_INIT_INVALID_VOLTAGE_SELECTION;
     }
 
+  /*
+   *  if right_adjusted, use 10-bit
+   *  conversion results, else
+   *  use 8-bit conversion results.
+   */
   if (right_adjusted)
     {
       ADMUX &= ~(1 << ADLAR);
@@ -71,20 +55,31 @@ adc_init (uint8_t voltage_selection, uint8_t right_adjusted,
       ADMUX |= (1 << ADLAR);
     }
 
+  /*
+   *  Select input channel
+   */
   if (!is_valid_adc_channel (adc_channel_selection))
     {
       return ADC_INIT_INVALID_CHANNEL_SELECTION;
     }
-  adc_init_channel_selection (adc_channel_selection);
+  ADMUX |= adc_channel_selection;
 
+  /*
+   *  Select the clock prescaler value.
+   */
+  // TODO: how does one go about choosing a prescaler value?
   if (!is_valid_adc_prescaler (adc_prescaler_selection))
     {
       return ADC_INIT_INVALID_PRESCALER_SELECTION;
     }
+  ADCSRA |= adc_prescaler_selection;
 
-  adc_init_prescaler_selection (adc_prescaler_selection);
+  if (!(ADCSRA & (1 << ADEN)))
+    {
+      // enable adc, but don't start conversion.
+      ADCSRA |= (1 << ADEN);
+    }
 
-  ADCSRA |= (1 << ADEN);
   return ADC_INIT_SUCCESS;
 }
 
@@ -128,53 +123,41 @@ is_valid_adc_prescaler (uint8_t p)
     }
 }
 
-static uint8_t
-adc_init_voltage_selection (uint8_t selection)
+uint16_t
+adc_start (uint8_t right_adjusted)
 {
-  switch (selection)
+  ADCSRA |= (1 << ADSC);
+  while (adc_busy ())
+    ;
+
+  /*
+   *  "ADCL must be read first" 23.9.3 ADCL
+   *  and ADCH - The ADC Data Register (pg. 219)
+   */
+  if (right_adjusted)
     {
-    /*
-     *  Sets the reference selection bits in
-     *  the ADC Multiplex Selection Register.
-     *  See 23.9.1 ADMUX – ADC Multiplexer
-     *  Selection Register, Bit 7:6 (pg. 217)
-     *  for more details.
-     */
-    case AREF:
-      ADMUX &= ~((1 << REFS1) | (1 << REFS0));
-      break;
-    case AVCC:
-      ADMUX &= ~(1 << REFS1);
-      ADMUX |= (1 << REFS0);
-      break;
-    case INTERNAL_REF:
-      ADMUX |= (1 << REFS1) | (1 << REFS0);
-      break;
-    default:
-      return ADC_INIT_INVALID_VOLTAGE_SELECTION;
+      uint16_t res = ADCL;
+      res |= ((ADCH & 0x3) << 8);
+      return res;
     }
-  return 0;
+  return ADCH;
 }
 
-static void
-adc_init_channel_selection (uint8_t selection)
+void
+adc_disable (void)
 {
-  const uint8_t ADC_CHANNEL_SELECTION_MASK = 0xF;
+  while (adc_busy ())
+    ;
 
-  // initial value should be
-  // zero, just doing this to
-  // be safe.
-  ADMUX &= ~(ADC_CHANNEL_SELECTION_MASK);
-  ADMUX |= selection;
+  // disable adc
+  ADCSRA &= ~(1 << ADEN);
+
+  // Enable power reduction ADC bit
+  PRR |= (1 << PRADC);
 }
 
-static void
-adc_init_prescaler_selection (uint8_t selection)
+static uint8_t
+adc_busy (void)
 {
-  const uint8_t ADC_PRESCALER_SELECTION_MASK = 0x7;
-
-  // Doing this out of an abundance of
-  // caution, probably unnecessary
-  ADCSRA &= ~(ADC_PRESCALER_SELECTION_MASK);
-  ADCSRA |= selection;
+  return ADCSRA & (1 << ADSC);
 }
