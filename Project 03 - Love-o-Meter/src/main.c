@@ -31,6 +31,7 @@ main (void)
 {
   setup_serial_connection ();
   setup_love_o_meter ();
+
   main_loop ();
 
   return 0;
@@ -81,22 +82,69 @@ main_loop (void)
 {
   // TODO: have the arduino calculate this itself
   //  do it either at startup or on a button press
-  // const float BASELINE_TMP = 20.0;
+  const float BASELINE_TMP = 23.0;
+  uint16_t sensor_value = 0;
+  float voltage = 0.0f;
+  float temperature = 0.0f;
+  uint8_t output_buffer[STR_MAX_LEN];
 
   while (1)
     {
-      uint8_t output_buffer[STR_MAX_LEN];
+      // FIXME: lights don't turn off like they should after being set
+      if (temperature < BASELINE_TMP + 2)
+        {
+          PIND &= ~(1 << PIND2);
+          PIND &= ~(1 << PIND3);
+          PIND &= ~(1 << PIND4);
+        }
+      else if (temperature < BASELINE_TMP + 4)
+        {
+          // TODO: create a digital write function in util.c
+          if (!(PIND & (1 << PIND2)))
+            {
+              PIND |= (1 << PIND2);
+            }
+          PIND &= ~(1 << PIND3);
+          PIND &= ~(1 << PIND4);
+        }
+      else if (temperature < BASELINE_TMP + 6)
+        {
+          if (!(PIND & (1 << PIND2)))
+            {
+              PIND |= (1 << PIND2);
+            }
+          if (!(PIND & (1 << PIND3)))
+            {
+              PIND |= (1 << PIND3);
+            }
+          PIND &= ~(1 << PIND4);
+        }
+      else
+        {
+          if (!(PIND & (1 << PIND2)))
+            {
+              PIND |= (1 << PIND2);
+            }
+          if (!(PIND & (1 << PIND3)))
+            {
+              PIND |= (1 << PIND3);
+            }
+          if (!(PIND & (1 << PIND4)))
+            {
+              PIND |= (1 << PIND4);
+            }
+        }
 
-      uint16_t sensor_value = adc_start (1);
+      sensor_value = adc_start (1);
       output_sensor_value (sensor_value, output_buffer);
 
-      float voltage = TMP36_sensor_value_to_voltage (sensor_value);
+      voltage = TMP36_sensor_value_to_voltage (sensor_value);
       output_voltage (voltage, output_buffer);
 
-      float temperature = voltage_to_temperature (voltage);
+      temperature = voltage_to_temperature (voltage);
       output_temperature (temperature, output_buffer);
 
-      _delay_ms (1000);
+      _delay_ms (2000);
     }
 }
 
