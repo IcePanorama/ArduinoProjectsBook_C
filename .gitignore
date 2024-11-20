@@ -3,6 +3,7 @@
 *.hex
 *.o
 *.json
+.cache/*
 
 # Prerequisites
 *.d
