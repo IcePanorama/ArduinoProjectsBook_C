@@ -19,7 +19,8 @@ F_CPU = 16000000UL
 TARGET = main
 SRC_DIR=src
 INCL_DIR=include
-SRC = $(SRC_DIR)/main.c
+SRC = $(SRC_DIR)/main.c \
+      $(SRC_DIR)/uart_hal.c
 INCL = $(INCL_DIR)/uart_hal.h
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex
@@ -30,7 +31,7 @@ FMT_FLAGS = -style=$(STYLE)
 all: clean format $(HEX)
 
 $(HEX): $(OBJS)
-	$(CC) -c $(CFLAGS) $(SRC)
+	$(CC) -c $(CFLAGS) $(SRC) -I$(INCL_DIR)/
 	$(CC) -o $(BIN) *.o $(LDFLAGS)
 	$(OBJCOPY) -O ihex -R .eeprom $(BIN) $(HEX)
 
