@@ -30,7 +30,7 @@ FMT_FLAGS = -style=$(STYLE)
 all: clean format $(HEX)
 
 $(HEX): $(OBJS)
-	$(CC) $(CFLAGS) $(SRC)
+	$(CC) -c $(CFLAGS) $(SRC)
 	$(CC) -o $(BIN) *.o $(LDFLAGS)
 	$(OBJCOPY) -O ihex -R .eeprom $(BIN) $(HEX)
 
@@ -48,4 +48,4 @@ connect:
 	sudo cu -l /dev/ttyACM0 -s 9600
 
 format:
-	$(FMT) $(FMT_FLAGS) -i $(SRC) $(INCL)
+	$(FMT) $(FMT_FLAGS) -i $(SRC) #$(INCL)
