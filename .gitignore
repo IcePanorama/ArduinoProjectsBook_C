@@ -2,6 +2,7 @@
 *.bin
 *.hex
 *.o
+*.json
 
 # Prerequisites
 *.d

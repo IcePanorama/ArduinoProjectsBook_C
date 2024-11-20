@@ -14,14 +14,15 @@ TARGET = main
 SRC_DIR=src
 SRC = $(SRC_DIR)/*.c
 INCL = $(SRC_DIR)/*.h
-OBJ = $(TARGET).o
+OBJ = *.o
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex
 
 STYLE = GNU
 CFFLAGS = -style=$(STYLE)
 
-all: clean erase format $(HEX)
+#all: clean erase format $(HEX)
+all: clean format $(HEX)
 
 $(HEX): $(OBJS)
 	$(CC) $(CFLAGS) $(SRC)
@@ -31,9 +32,7 @@ $(HEX): $(OBJS)
 flash: $(HEX)
 	sudo $(AVRDUDE) -F -V -c arduino -p $(MCU) -P $(PORT) -b $(BAUD_RATE) -U flash:w:$(HEX)
 
-clean: clean_files erase
-
-clean_files:
+clean:
 	rm -f $(OBJ) $(BIN) $(HEX)
 
 erase:

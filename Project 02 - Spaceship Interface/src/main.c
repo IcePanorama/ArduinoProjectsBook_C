@@ -16,21 +16,16 @@ main (void)
 }
 
 /*
- *  Setup
- *
  *  Configures Port D as follows:
  *    * DDD2 (PORTD2) as input for switch
  *    * DDD3 (PORTD3) as output for green LED
  *    * DDD4 (PORTD4) as output for first red LED
  *    * DDD5 (PORTD5) as output for second red LED
- *
  */
 void
 setup (void)
 {
-  // initial value is 0 so this
-  // is probably unnecessary,
-  // but just to be safe
+  /* initial value is 0 so this is probably unnecessary, but just to be safe */
   DDRD &= ~(1 << DDD2);
 
   DDRD |= (1 << DDD3);
