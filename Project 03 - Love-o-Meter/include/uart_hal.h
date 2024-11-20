@@ -37,7 +37,7 @@ void uart_send_array (uint8_t *arr, uint16_t length);
  *  `uart_send_byte` function.
  *  @param  str  a string to transmit
  */
-void uart_send_string (const uint8_t *str);
+void uart_send_string (const char *str);
 
 /* @return the number of received bytes which have yet to be read. */
 uint16_t uart_read_count (void);

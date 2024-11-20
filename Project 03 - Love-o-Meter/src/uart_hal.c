@@ -91,7 +91,7 @@ uart_send_array (uint8_t *arr, uint16_t length)
 }
 
 void
-uart_send_string (const uint8_t *str)
+uart_send_string (const char *str)
 {
   uint16_t i = 0;
 
