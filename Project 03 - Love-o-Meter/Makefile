@@ -19,8 +19,8 @@ F_CPU = 16000000UL
 TARGET = main
 SRC_DIR=src
 INCL_DIR=include
-SRC = $(SRC_DIR)/*.c
-INCL = $(SRC_DIR)/*.h
+SRC = $(SRC_DIR)/main.c
+INCL = $(INCL_DIR)/uart_hal.h
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex
 
@@ -48,4 +48,4 @@ connect:
 	sudo cu -l /dev/ttyACM0 -s 9600
 
 format:
-	$(FMT) $(FMT_FLAGS) -i $(SRC) #$(INCL)
+	$(FMT) $(FMT_FLAGS) -i $(SRC) $(INCL)
