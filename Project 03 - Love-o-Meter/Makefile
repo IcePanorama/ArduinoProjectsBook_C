@@ -1,5 +1,6 @@
 CC = avr-gcc
-CFLAGS = -std=c99 -Wpedantic -Wextra -Werror -Wall -Wstrict-aliasing=3
+# `utils/delay.h` throws a warning when compiling w/o optimizations
+CFLAGS = -O1 -std=c99 -Wpedantic -Wextra -Werror -Wall -Wstrict-aliasing=3
 CFLAGS += -Wwrite-strings -Wvla -Wcast-align=strict -Wstrict-prototypes
 CFLAGS += -Wstringop-overflow=4 -Wshadow -fanalyzer -DF_CPU=$(F_CPU)
 CFLAGS += -mmcu=$(MCU)

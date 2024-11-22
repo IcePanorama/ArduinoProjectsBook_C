@@ -5,6 +5,7 @@
 #include <avr/io.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <util/delay.h>
 
 #define PORT_C_DATA_DIRECTION_REGISTER (DDRC)
 #define PORT_C0_DATA_DIRECTION_BIT (DDC0)
@@ -53,7 +54,11 @@ love_o_meter_loop (void)
       float voltage = sensor_value_to_voltage (sensor_val);
       float temperature = voltage_to_temperature (voltage);
 
-      // avr libc sprintf can't handle floats, apparently
+      /*
+       *  avr libc sprintf can't handle floats, apparently.
+       *  @see:
+       * https://onlinedocs.microchip.com/oxy/GUID-317042D4-BCCE-4065-BB05-AC4312DBC2C4-en-US-2/GUID-BC6AFB6B-C75E-4B3B-9185-1F369F36AE22.html#GUID-BC6AFB6B-C75E-4B3B-9185-1F369F36AE22
+       */
       sprintf (output_buffer,
                "Sensor value: %d Voltage: 0.%02d Temperature (C): %d.%d\r\n",
                sensor_val, (int)(voltage * 100), (int)temperature,
@@ -61,6 +66,7 @@ love_o_meter_loop (void)
       uart_send_string (output_buffer);
 
       configure_output_leds_w_temperature (temperature);
+      _delay_ms (1000);
     }
 }
 
