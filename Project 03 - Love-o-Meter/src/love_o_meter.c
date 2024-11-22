@@ -21,6 +21,7 @@
 
 static float sensor_value_to_voltage (uint16_t val);
 static float voltage_to_temperature (float v);
+static float celsius_to_fahrenheit (float c);
 static void configure_output_leds_w_temperature (float temp);
 
 uint8_t
@@ -50,9 +51,10 @@ love_o_meter_loop (void)
 
   while (true)
     {
-      uint16_t sensor_val = adc_start (true);
-      float voltage = sensor_value_to_voltage (sensor_val);
-      float temperature = voltage_to_temperature (voltage);
+      const uint16_t sensor_val = adc_start (true);
+      const float voltage = sensor_value_to_voltage (sensor_val);
+      const float temperature = voltage_to_temperature (voltage);
+      const float temp_f = celsius_to_fahrenheit (temperature);
 
       /*
        *  avr libc sprintf can't handle floats, apparently.
@@ -60,9 +62,10 @@ love_o_meter_loop (void)
        * https://onlinedocs.microchip.com/oxy/GUID-317042D4-BCCE-4065-BB05-AC4312DBC2C4-en-US-2/GUID-BC6AFB6B-C75E-4B3B-9185-1F369F36AE22.html#GUID-BC6AFB6B-C75E-4B3B-9185-1F369F36AE22
        */
       sprintf (output_buffer,
-               "Sensor value: %d Voltage: 0.%02d Temperature (C): %d.%d\r\n",
+               "Sensor value: %d Voltage: 0.%02d Temperature (C): %d "
+               "Temperature (F): %d\r\n",
                sensor_val, (int)(voltage * 100), (int)temperature,
-               ((int)(temperature * 10) % 100));
+               (int)temp_f);
       uart_send_string (output_buffer);
 
       configure_output_leds_w_temperature (temperature);
@@ -89,7 +92,6 @@ configure_output_leds_w_temperature (float temp)
 
   if (temp < BASELINE_TEMP + 2)
     {
-      // all off
       PORT_D_DATA_REGISTER &= ~(1 << (PORT_D2));
       PORT_D_DATA_REGISTER &= ~(1 << (PORT_D3));
       PORT_D_DATA_REGISTER &= ~(1 << (PORT_D4));
@@ -112,4 +114,10 @@ configure_output_leds_w_temperature (float temp)
       PORT_D_DATA_REGISTER |= (1 << (PORT_D3));
       PORT_D_DATA_REGISTER |= (1 << (PORT_D4));
     }
+}
+
+float
+celsius_to_fahrenheit (float c)
+{
+  return (c * 1.8) + 32;
 }
