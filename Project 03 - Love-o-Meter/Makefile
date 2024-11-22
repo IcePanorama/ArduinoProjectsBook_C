@@ -22,7 +22,8 @@ INCL_DIR=include
 SRC = $(SRC_DIR)/main.c \
       $(SRC_DIR)/love_o_meter.c \
       $(SRC_DIR)/uart_hal.c
-INCL = $(INCL_DIR)/uart_hal.h \
+INCL = $(INCL_DIR)/adc.h \
+       $(INCL_DIR)/uart_hal.h \
        $(INCL_DIR)/love_o_meter.h
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex
