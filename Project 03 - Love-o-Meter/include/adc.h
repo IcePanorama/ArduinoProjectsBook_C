@@ -4,12 +4,20 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef enum ADCInitResult_e
+{
+  ADC_INIT_SUCCESS,
+  ADC_INIT_INVALID_REF_VOLTAGE_SELECTION,
+  ADC_INIT_INVALID_CHANNEL_SELECTION,
+  ADC_INIT_INVALID_PRESCALER_SELECTION
+} ADCInitResult_t;
+
 /* Reference Voltages */
 typedef enum ADCRefVoltage_e
 {
-  ADCVR_AREF, // Internal Vref turned off
-  ADCVR_AVCC, // AVcc
-  ADCVR_1v1   // Internal 1.1V voltage reference
+  ADCRV_AREF, // Internal Vref turned off
+  ADCRV_AVCC, // AVcc
+  ADCRV_1V1   // Internal 1.1V voltage reference
 } ADCRefVoltage_t;
 
 typedef enum ADCChannel_e
@@ -38,7 +46,8 @@ typedef enum ADCPrescalerDivisor_e
   ADCP_BY_128,
 } ADCPrescalerDivisor_t;
 
-uint8_t adc_init (ADCRefVoltage_t ref_voltage, bool right_adjusted,
-                  ADCChannel_t channel, ADCPrescalerDivisor_t prescaler);
+ADCInitResult_t adc_init (ADCRefVoltage_t ref_voltage, bool right_adjusted,
+                          ADCChannel_t channel,
+                          ADCPrescalerDivisor_t prescaler);
 
 #endif /* _ANALOG_TO_DIGITAL_CONVERTER_HAL_H_ */

@@ -19,7 +19,8 @@ F_CPU = 16000000UL
 TARGET = main
 SRC_DIR=src
 INCL_DIR=include
-SRC = $(SRC_DIR)/main.c \
+SRC = $(SRC_DIR)/adc.c \
+      $(SRC_DIR)/main.c \
       $(SRC_DIR)/love_o_meter.c \
       $(SRC_DIR)/uart_hal.c
 INCL = $(INCL_DIR)/adc.h \
