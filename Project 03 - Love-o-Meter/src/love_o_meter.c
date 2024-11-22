@@ -19,11 +19,11 @@
 #define PORT_D3_DATA_DIRECTION_BIT (DDD3)
 #define PORT_D4_DATA_DIRECTION_BIT (DDD4)
 
+static float calculate_baseline_temp (void);
 static float sensor_value_to_voltage (uint16_t val);
 static float voltage_to_temperature (float v);
 static float celsius_to_fahrenheit (float c);
 static void configure_output_leds_w_temperature (float temp);
-static float calculate_baseline_temp (void);
 
 static float baseline_temp = 20.0;
 
@@ -49,6 +49,23 @@ init_love_o_meter (void)
   uart_send_string ("Baseline temperature calculation complete.\r\n");
 
   return 0;
+}
+
+float
+calculate_baseline_temp (void)
+{
+  float total = 0.0;
+
+  for (uint8_t i = 0; i < 5; i++)
+    {
+      const uint16_t sensor_val = adc_start (true);
+      const float voltage = sensor_value_to_voltage (sensor_val);
+      const float temp = voltage_to_temperature (voltage);
+      total += temp;
+      _delay_ms (1000);
+    }
+
+  return total / 5;
 }
 
 void
@@ -96,6 +113,12 @@ voltage_to_temperature (float v)
   return (v - 0.5) * 100;
 }
 
+float
+celsius_to_fahrenheit (float c)
+{
+  return (c * 1.8) + 32;
+}
+
 void
 configure_output_leds_w_temperature (float temp)
 {
@@ -123,27 +146,4 @@ configure_output_leds_w_temperature (float temp)
       PORT_D_DATA_REGISTER |= (1 << (PORT_D3));
       PORT_D_DATA_REGISTER |= (1 << (PORT_D4));
     }
-}
-
-float
-celsius_to_fahrenheit (float c)
-{
-  return (c * 1.8) + 32;
-}
-
-float
-calculate_baseline_temp (void)
-{
-  float total = 0.0;
-
-  for (uint8_t i = 0; i < 5; i++)
-    {
-      const uint16_t sensor_val = adc_start (true);
-      const float voltage = sensor_value_to_voltage (sensor_val);
-      const float temp = voltage_to_temperature (voltage);
-      total += temp;
-      _delay_ms (1000);
-    }
-
-  return total / 5;
 }

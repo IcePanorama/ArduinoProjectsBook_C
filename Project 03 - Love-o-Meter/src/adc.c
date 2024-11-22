@@ -127,6 +127,12 @@ is_valid_prescaler_value (ADCPrescalerDivisor_t p)
     }
 }
 
+bool
+adc_is_enabled (void)
+{
+  return (ADC_CTRL_STATUS_REGISTER_A) & (1 << (ADC_ENABLE_BIT));
+}
+
 uint16_t
 adc_start (bool right_adjusted)
 {
@@ -136,10 +142,4 @@ adc_start (bool right_adjusted)
     ;
 
   return right_adjusted ? ADC_CONVERSION_RESULT : ADC_DATA_REGISTER_HI;
-}
-
-bool
-adc_is_enabled (void)
-{
-  return (ADC_CTRL_STATUS_REGISTER_A) & (1 << (ADC_ENABLE_BIT));
 }
