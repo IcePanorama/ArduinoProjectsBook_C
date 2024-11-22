@@ -3,13 +3,25 @@
 #include <avr/io.h>
 
 #define PORT_C_DATA_DIRECTION_REGISTER (DDRC)
-#define PORT_C_DATA_DIRECTION_BIT (DDC0)
+#define PORT_C0_DATA_DIRECTION_BIT (DDC0)
 
 #define PORT_D_DATA_DIRECTION_REGISTER (DDRD)
+#define PORT_D2_DATA_DIRECTION_BIT (DDD2)
+#define PORT_D3_DATA_DIRECTION_BIT (DDD3)
+#define PORT_D4_DATA_DIRECTION_BIT (DDD4)
 
 uint8_t
 init_love_o_meter (void)
 {
-  /* Configure Port C as an input. */
-  PORT_C_DATA_DIRECTION_REGISTER |= ~(1 << (PORT_C_DATA_DIRECTION_BIT));
+  /* Configure Port C0 as an input. */
+  PORT_C_DATA_DIRECTION_REGISTER &= ~(1 << (PORT_C0_DATA_DIRECTION_BIT));
+
+  /* Configure Port D2-4 as output. */
+  PORT_D_DATA_DIRECTION_REGISTER |= (1 << PORT_D2_DATA_DIRECTION_BIT);
+  PORT_D_DATA_DIRECTION_REGISTER |= (1 << PORT_D3_DATA_DIRECTION_BIT);
+  PORT_D_DATA_DIRECTION_REGISTER |= (1 << PORT_D4_DATA_DIRECTION_BIT);
+
+  // TODO: init adc
+
+  return 0;
 }
