@@ -49,5 +49,6 @@ typedef enum ADCPrescalerDivisor_e
 ADCInitResult_t adc_init (ADCRefVoltage_t ref_voltage, bool right_adjusted,
                           ADCChannel_t channel,
                           ADCPrescalerDivisor_t prescaler);
+uint16_t adc_start (bool right_adjusted);
 
 #endif /* _ANALOG_TO_DIGITAL_CONVERTER_HAL_H_ */
