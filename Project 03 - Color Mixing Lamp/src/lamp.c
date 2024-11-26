@@ -51,10 +51,16 @@ l_init_lamp (void)
   }
   /* clang-format on */
 
-  // Configure the red, green, and blue pins as output.
-  PORT_B_DATA_DIRECTION_REGISTER |= (1 << (RED_LED_PIN_DATA_DIR_BIT));
-  PORT_B_DATA_DIRECTION_REGISTER |= (1 << (GREEN_LED_PIN_DATA_DIR_BIT));
-  PORT_B_DATA_DIRECTION_REGISTER |= (1 << (BLUE_LED_PIN_DATA_DIR_BIT));
+  /*
+   *  The setup of the OC2x should be performed before setting the data
+   *  direction register for the port pin to output.
+   */
+  /*
+    // Configure the red, green, and blue pins as output.
+    PORT_B_DATA_DIRECTION_REGISTER |= (1 << (RED_LED_PIN_DATA_DIR_BIT));
+    PORT_B_DATA_DIRECTION_REGISTER |= (1 << (GREEN_LED_PIN_DATA_DIR_BIT));
+    PORT_B_DATA_DIRECTION_REGISTER |= (1 << (BLUE_LED_PIN_DATA_DIR_BIT));
+  */
 
   return 0;
 }
