@@ -31,6 +31,8 @@ ai_analog_read (AnalogInput_t *ai, uint16_t *output)
         return -1;
     }
 
+  last_input = ai;
+
   *output = adc_start (ai->right_adjusted);
   return 0;
 }
