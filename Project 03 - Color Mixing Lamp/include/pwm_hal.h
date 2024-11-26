@@ -31,6 +31,7 @@ typedef enum CompareOutputMode_e
   COM_SET
 } CompareOutputMode_t;
 
+/** see: Table 14-9, pg. 87, ATmega328P data sheet. */
 typedef enum ClockSelect_e
 {
   CS_NONE, // Timer/Counter stopped.
@@ -40,7 +41,9 @@ typedef enum ClockSelect_e
   CS_PRESCALE_BY_64,
   CS_PRESCALE_BY_128,
   CS_PRESCALE_BY_256,
-  CS_PRESCALE_BY_1024
+  CS_PRESCALE_BY_1024,
+  CS_EXT_FALLING_EDGE, // External clk source on T0 pin. Clock on falling edge.
+  CS_EXT_RISING_EDGE, // External clk source on T0 pin. Clock on rising edge.
 } ClockSelect_t;
 
 int8_t pwm_init (TimerCounterSelect_t timer,

@@ -146,6 +146,8 @@ is_valid_clock_select (ClockSelect_t s)
     case CS_PRESCALE_BY_128:
     case CS_PRESCALE_BY_256:
     case CS_PRESCALE_BY_1024:
+    case CS_EXT_FALLING_EDGE:
+    case CS_EXT_RISING_EDGE:
       return true;
     default:
       return false;
