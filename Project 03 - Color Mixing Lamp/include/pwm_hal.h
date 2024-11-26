@@ -4,6 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/**
+ *  ~D11 = PB3 = OC2A (Timer/Counter2 output compare match A output)
+ *  ~D10 = PB2 = OC1B (Timer/Counter1 output compare match B output)
+ *  ~D09 = PB1 = OC1A (Timer/Counter1 output compare match A output)
+ */
+
 typedef enum TimerCounterSelect_e
 {
   TCNTRS_0, // see: Ch. 14, pp. 74-88, ATmega328P data sheet.
@@ -14,12 +20,12 @@ typedef enum TimerCounterSelect_e
 /** see: Table 17-8, pg. 130, ATmega328P data sheet. */
 typedef enum WaveformGenerationMode_e
 {
-  WGM_MODE_0, // Normal
-  WGM_MODE_1, // PWM, phase correct (TOP = 0xFF)
-  WGM_MODE_2, // CTC (Clear Timer on Compare match)
-  WGM_MODE_3, // Fast PWM (TOP = 0xFF)
-  WGM_MODE_5, // PWM, phase correct (TOP = OCRA)
-  WGM_MODE_7, // Fast PWM (TOP = OCRA)
+  WGM_MODE_0,       // Normal (0b000)
+  WGM_MODE_1,       // PWM, phase correct (TOP = 0xFF, 0b001)
+  WGM_MODE_2,       // CTC (Clear Timer on Compare match, 0b010)
+  WGM_MODE_3,       // Fast PWM (TOP = 0xFF, 0b011)
+  WGM_MODE_5 = 0x5, // PWM, phase correct (TOP = OCRA, 0b101)
+  WGM_MODE_7 = 0x7, // Fast PWM (TOP = OCRA, 0b111)
 } WaveformGenerationMode_t;
 
 /** see: pp. 128-9, ATmega328P data sheet. */
@@ -43,7 +49,7 @@ typedef enum ClockSelect_e
   CS_PRESCALE_BY_256,
   CS_PRESCALE_BY_1024,
   CS_EXT_FALLING_EDGE, // External clk source on T0 pin. Clock on falling edge.
-  CS_EXT_RISING_EDGE, // External clk source on T0 pin. Clock on rising edge.
+  CS_EXT_RISING_EDGE,  // External clk source on T0 pin. Clock on rising edge.
 } ClockSelect_t;
 
 int8_t pwm_init (TimerCounterSelect_t timer,

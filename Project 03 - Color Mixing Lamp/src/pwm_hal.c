@@ -1,6 +1,8 @@
 #include "pwm_hal.h"
 #include "uart_hal.h"
 
+#include <avr/io.h>
+
 #define TCNTR0_CONTROL_REGISTER_A (TCCR0A)
 #define TCNTR0_CONTROL_REGISTER_B (TCCR0B)
 
@@ -9,6 +11,17 @@
 
 #define TCNTR2_CONTROL_REGISTER_A (TCCR2A)
 #define TCNTR2_CONTROL_REGISTER_B (TCCR2B)
+
+#define WAVEFORM_GENERATION_MODE_BIT_0 (WGM00)
+#define WAVEFORM_GENERATION_MODE_BIT_1 (WGM01)
+#define WAVEFORM_GENERATION_MODE_BIT_2 (WGM02)
+
+// Not sure how big exactly these register addresses are. TODO: find out
+typedef struct PMWTimerCntr_s
+{
+  uint16_t control_register_a;
+  uint16_t control_register_b;
+} PMWTimerCntr_t;
 
 static int8_t validate_init_input (TimerCounterSelect_t t,
                                    WaveformGenerationMode_t w,
@@ -19,6 +32,16 @@ static bool is_valid_timer (TimerCounterSelect_t t);
 static bool is_valid_waveform_gen_mode (WaveformGenerationMode_t w);
 static bool is_valid_cmp_output_mode (CompareOutputMode_t c);
 static bool is_valid_clock_select (ClockSelect_t s);
+static PMWTimerCntr_t *get_pmw_from_selection (TimerCounterSelect_t t);
+static void set_waveform_gen_mode (PMWTimerCntr_t *pmw,
+                                   WaveformGenerationMode_t w);
+
+static PMWTimerCntr_t timer0
+    = { (TCNTR0_CONTROL_REGISTER_A), (TCNTR0_CONTROL_REGISTER_B) };
+static PMWTimerCntr_t timer1
+    = { (TCNTR1_CONTROL_REGISTER_A), (TCNTR1_CONTROL_REGISTER_B) };
+static PMWTimerCntr_t timer2
+    = { (TCNTR1_CONTROL_REGISTER_A), (TCNTR1_CONTROL_REGISTER_B) };
 
 int8_t
 pwm_init (TimerCounterSelect_t timer,
@@ -32,6 +55,8 @@ pwm_init (TimerCounterSelect_t timer,
     {
       return -1;
     }
+
+  PMWTimerCntr_t *pmw = get_pmw_from_selection (timer);
 
   return 0;
 }
@@ -151,5 +176,36 @@ is_valid_clock_select (ClockSelect_t s)
       return true;
     default:
       return false;
+    }
+}
+
+PMWTimerCntr_t *
+get_pmw_from_selection (TimerCounterSelect_t t)
+{
+  switch (t)
+    {
+    case TCNTRS_0:
+      return &timer0;
+    case TCNTRS_1:
+      return &timer1;
+    case TCNTRS_2:
+      return &timer2;
+    }
+}
+
+void
+set_waveform_gen_mode (PMWTimerCntr_t *pmw, WaveformGenerationMode_t w)
+{
+  switch (w)
+    {
+    case WGM_MODE_0:
+      pmw->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_0));
+      pmw->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_1));
+      pmw->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
+    case WGM_MODE_1:
+    case WGM_MODE_2:
+    case WGM_MODE_3:
+    case WGM_MODE_5:
+    case WGM_MODE_7:
     }
 }
