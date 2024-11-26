@@ -13,7 +13,7 @@ main (void)
   init_serial_connection ();
   l_init_lamp ();
 
-  return 0;
+  return l_lamp_loop ();
 }
 
 void
