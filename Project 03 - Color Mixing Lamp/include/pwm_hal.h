@@ -2,6 +2,7 @@
 #define _PULSE_WIDTH_MODULATOR_HARDWARE_ABSTRACTION_LAYER_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef enum TimerCounterSelect_e
 {
@@ -32,7 +33,7 @@ typedef enum CompareOutputMode_e
 
 typedef enum ClockSelect_e
 {
-  CS_NONE,  // Timer/Counter stopped.
+  CS_NONE, // Timer/Counter stopped.
   CS_NO_PRESCALING,
   CS_PRESCALE_BY_8,
   CS_PRESCALE_BY_32,
@@ -42,6 +43,9 @@ typedef enum ClockSelect_e
   CS_PRESCALE_BY_1024
 } ClockSelect_t;
 
-void pwm_init (TimerCounterSelect_t timer, WaveformGenerationMode_t waveform_gen_mode, CompareOutputMode_t cmp_output_mode, bool force_output_cmp_a, bool force_output_cmp_b, ClockSelect_t prescale);
+int8_t pwm_init (TimerCounterSelect_t timer,
+                 WaveformGenerationMode_t waveform_gen_mode,
+                 CompareOutputMode_t cmp_output_mode, bool force_output_cmp_a,
+                 bool force_output_cmp_b, ClockSelect_t prescale);
 
 #endif /* _PULSE_WIDTH_MODULATOR_HARDWARE_ABSTRACTION_LAYER_H_ */

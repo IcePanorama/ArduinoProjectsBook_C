@@ -24,10 +24,12 @@ SRC = $(SRC_DIR)/adc.c \
       $(SRC_DIR)/analog_input.c \
       $(SRC_DIR)/lamp.c \
       $(SRC_DIR)/main.c \
+      $(SRC_DIR)/pwm_hal.c \
       $(SRC_DIR)/uart_hal.c
 INCL = $(INCL_DIR)/adc.h \
        $(INCL_DIR)/analog_input.h \
        $(INCL_DIR)/lamp.h \
+       $(INCL_DIR)/pwm_hal.h \
        $(INCL_DIR)/uart_hal.h
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex
