@@ -3,6 +3,7 @@
 #include "uart_hal.h"
 
 #include <avr/io.h>
+#include <util/delay.h>
 
 #define PORT_C_DATA_DIRECTION_REGISTER (DDRC)
 
@@ -24,7 +25,7 @@ static const ADCChannel_t RED_PHOTORESISTOR_CHANNEL = ADCC_ADC0;
 static const ADCChannel_t GREEN_PHOTORESISTOR_CHANNEL = ADCC_ADC1;
 static const ADCChannel_t BLUE_PHOTORESISTOR_CHANNEL = ADCC_ADC2;
 
-uint8_t
+int8_t
 l_init_lamp (void)
 {
   // Configure the red, green, and blue photoresistors as input.
@@ -55,4 +56,23 @@ l_init_lamp (void)
 void
 l_lamp_loop (void)
 {
+  uint16_t red_sensor_val;
+  if (ai_analog_read (&red_photoresistor, &red_sensor_val) != 0)
+    goto error_cleanup;
+
+  _delay_ms (5000);
+
+  uint16_t green_sensor_val;
+  if (ai_analog_read (&green_photoresistor, &green_sensor_val) != 0)
+    goto error_cleanup;
+
+  _delay_ms (5000);
+
+  uint16_t blue_sensor_val;
+  if (ai_analog_read (&blue_photoresistor, &blue_sensor_val) != 0)
+    goto error_cleanup;
+  return;
+error_cleanup:
+  uart_send_string ("Error reading from analog input!\r\n");
+  return;
 }

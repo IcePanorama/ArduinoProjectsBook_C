@@ -15,5 +15,6 @@ typedef struct AnalogInput_s
 } AnalogInput_t;
 
 uint8_t ai_create_analog_input (AnalogInput_t *ai, ADCChannel_t channel);
+int8_t ai_analog_read (AnalogInput_t *ai, uint16_t *output);
 
 #endif /* _ANALOG_INPUT_H_ */

@@ -1,3 +1,4 @@
+#include "lamp.h"
 #include "uart_hal.h"
 
 #include <avr/interrupt.h>
@@ -10,6 +11,7 @@ int
 main (void)
 {
   init_serial_connection ();
+  l_init_lamp ();
 
   return 0;
 }
