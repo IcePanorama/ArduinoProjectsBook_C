@@ -20,9 +20,15 @@ F_CPU = 16000000UL
 TARGET = main
 SRC_DIR=src
 INCL_DIR=include
-SRC = $(SRC_DIR)/main.c \
+SRC = $(SRC_DIR)/adc.c \
+      $(SRC_DIR)/analog_input.c \
+      $(SRC_DIR)/lamp.c \
+      $(SRC_DIR)/main.c \
       $(SRC_DIR)/uart_hal.c
-INCL = $(INCL_DIR)/uart_hal.h
+INCL = $(INCL_DIR)/adc.h \
+       $(INCL_DIR)/analog_input.h \
+       $(INCL_DIR)/lamp.h \
+       $(INCL_DIR)/uart_hal.h
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex
 
