@@ -13,6 +13,16 @@
 #define TCNTR2_CONTROL_REGISTER_A (TCCR2A)
 #define TCNTR2_CONTROL_REGISTER_B (TCCR2B)
 
+#define TCNTR0_OUTPUT_COMPARE_REGISTER_A (OCR0A)
+#define TCNTR0_OUTPUT_COMPARE_REGISTER_B (OCR0B)
+
+/* These are both 16-bit registers. */
+#define TCNTR1_OUTPUT_COMPARE_REGISTER_A (OCR1A)
+#define TCNTR1_OUTPUT_COMPARE_REGISTER_B (OCR1B)
+
+#define TCNTR2_OUTPUT_COMPARE_REGISTER_A (OCR2A)
+#define TCNTR2_OUTPUT_COMPARE_REGISTER_B (OCR2B)
+
 /* Control Register A Bits */
 #define COMPARE_MATCH_OUTPUT_A_MODE_BIT_0 (COM0A0)
 #define COMPARE_MATCH_OUTPUT_A_MODE_BIT_1 (COM0A1)
@@ -21,6 +31,7 @@
 
 #define WAVEFORM_GENERATION_MODE_BIT_0 (WGM00)
 #define WAVEFORM_GENERATION_MODE_BIT_1 (WGM01)
+/***************************/
 
 /* Control Register B Bits */
 #define FORCE_OUTPUT_COMPARE_A_BIT (FOC0A)
@@ -31,6 +42,15 @@
 #define CLOCK_SELECT_BIT_0 (CS00)
 #define CLOCK_SELECT_BIT_1 (CS01)
 #define CLOCK_SELECT_BIT_2 (CS02)
+/***************************/
+
+#define POWER_REDUCTION_REGISTER (PRR)
+
+/* Power Reduction Register Bits */
+#define TCNTR0_POWER_REDUCTION_BIT (PRTIM0)
+#define TCNTR1_POWER_REDUCTION_BIT (PRTIM1)
+#define TCNTR2_POWER_REDUCTION_BIT (PRTIM2)
+/***************************/
 
 // TODO: look up the actual size of these registers
 typedef struct PMWTimerCntr_s
@@ -66,6 +86,7 @@ static void set_force_output_compare_bits (PMWTimerCntr_t *pmw,
                                            bool force_output_cmp_a,
                                            bool force_output_cmp_b);
 static void set_clk_select_mode_bits (PMWTimerCntr_t *pmw, ClockSelect_t c);
+static void enable_tcntr (TimerCounterSelect_t t);
 
 int8_t
 pwm_init (TimerCounterSelect_t timer,
@@ -94,6 +115,7 @@ pwm_init (TimerCounterSelect_t timer,
   set_cmp_output_mode (&pmw, waveform_gen_mode, cmp_output_mode);
   set_clk_select_mode_bits (&pmw, prescale);
 
+  enable_tcntr(timer);
   return 0;
 }
 
@@ -448,6 +470,28 @@ set_clk_select_mode_bits (PMWTimerCntr_t *pmw, ClockSelect_t c)
       pmw->control_register_b |= (1 << (CLOCK_SELECT_BIT_0));
       pmw->control_register_b |= (1 << (CLOCK_SELECT_BIT_1));
       pmw->control_register_b |= (1 << (CLOCK_SELECT_BIT_2));
+      break;
+    }
+}
+
+void
+enable_tcntr (TimerCounterSelect_t t)
+{
+  /*
+   *  "Writing a logic one to this bit shuts down the [Timer/CounterN] module.
+   *  When the [Timer/CounterN] is enabled, operation will continue like before
+   *  the shutdown." (pg. 39, ATmega328P data sheet).
+   */
+  switch (t)
+    {
+    case TCNTRS_0:
+      POWER_REDUCTION_REGISTER &= ~(1 << (TCNTR0_POWER_REDUCTION_BIT));
+      break;
+    case TCNTRS_1:
+      POWER_REDUCTION_REGISTER &= ~(1 << (TCNTR1_POWER_REDUCTION_BIT));
+      break;
+    case TCNTRS_2:
+      POWER_REDUCTION_REGISTER &= ~(1 << (TCNTR2_POWER_REDUCTION_BIT));
       break;
     }
 }

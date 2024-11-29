@@ -12,7 +12,7 @@
 
 typedef enum TimerCounterSelect_e
 {
-  TCNTRS_0, // see: Ch. 14, pp. 74-88, ATmega328P data sheet.
+  TCNTRS_0, // see: Ch. 14, pp.  74-88, ATmega328P data sheet.
   TCNTRS_1, // see: Ch. 15, pp. 89-113, ATmega328P data sheet.
   TCNTRS_2  // see: Ch. 17, pp. 116-34, ATmega328P data sheet.
 } TimerCounterSelect_t;
