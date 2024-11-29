@@ -43,9 +43,7 @@ typedef enum ClockSelect_e
   CS_NONE, // Timer/Counter stopped.
   CS_NO_PRESCALING,
   CS_PRESCALE_BY_8,
-  CS_PRESCALE_BY_32,
   CS_PRESCALE_BY_64,
-  CS_PRESCALE_BY_128,
   CS_PRESCALE_BY_256,
   CS_PRESCALE_BY_1024,
   CS_EXT_FALLING_EDGE, // External clk source on T0 pin. Clock on falling edge.
