@@ -37,6 +37,7 @@ INCL = $(INCL_DIR)/adc.h \
        $(INCL_DIR)/pwm/compare_output_mode.h \
        $(INCL_DIR)/pwm/pwm_hal.h \
        $(INCL_DIR)/pwm/pwm_timer_cntr.h \
+       $(INCL_DIR)/pwm/timer_cntr_selection.h \
        $(INCL_DIR)/pwm/waveform_generation_mode.h
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex

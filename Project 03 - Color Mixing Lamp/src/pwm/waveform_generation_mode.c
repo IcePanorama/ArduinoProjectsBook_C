@@ -25,39 +25,39 @@ wgm_is_valid_waveform_gen_mode (WaveformGenerationMode_t w)
 }
 
 void
-wgm_set_waveform_gen_mode (PMWTimerCntr_t *pmw, WaveformGenerationMode_t w)
+wgm_set_waveform_gen_mode (PWMTimerCntr_t *pwm, WaveformGenerationMode_t w)
 {
   switch (w)
     {
     case WGM_MODE_0:
-      pmw->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_0));
-      pmw->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_1));
-      pmw->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
+      pwm->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_0));
+      pwm->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_1));
+      pwm->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
       break;
     case WGM_MODE_1:
-      pmw->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
-      pmw->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_1));
-      pmw->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
+      pwm->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
+      pwm->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_1));
+      pwm->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
       break;
     case WGM_MODE_2:
-      pmw->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_0));
-      pmw->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_1));
-      pmw->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
+      pwm->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_0));
+      pwm->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_1));
+      pwm->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
       break;
     case WGM_MODE_3:
-      pmw->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
-      pmw->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_1));
-      pmw->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
+      pwm->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
+      pwm->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_1));
+      pwm->control_register_b &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_2));
       break;
     case WGM_MODE_5:
-      pmw->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
-      pmw->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_1));
-      pmw->control_register_b |= (1 << (WAVEFORM_GENERATION_MODE_BIT_2));
+      pwm->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
+      pwm->control_register_a &= ~(1 << (WAVEFORM_GENERATION_MODE_BIT_1));
+      pwm->control_register_b |= (1 << (WAVEFORM_GENERATION_MODE_BIT_2));
       break;
     case WGM_MODE_7:
-      pmw->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
-      pmw->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_1));
-      pmw->control_register_b |= (1 << (WAVEFORM_GENERATION_MODE_BIT_2));
+      pwm->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_0));
+      pwm->control_register_a |= (1 << (WAVEFORM_GENERATION_MODE_BIT_1));
+      pwm->control_register_b |= (1 << (WAVEFORM_GENERATION_MODE_BIT_2));
       break;
     }
 }

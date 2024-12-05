@@ -16,7 +16,7 @@ typedef enum CompareOutputMode_e
 } CompareOutputMode_t;
 
 bool cmp_is_valid_cmp_output_mode (CompareOutputMode_t c);
-void cmp_set_cmp_output_mode (PMWTimerCntr_t *pmw, WaveformGenerationMode_t w,
+void cmp_set_cmp_output_mode (PWMTimerCntr_t *pmw, WaveformGenerationMode_t w,
                               CompareOutputMode_t c);
 
 #endif /* _COMPARE_OUTPUT_MODE_H_ */

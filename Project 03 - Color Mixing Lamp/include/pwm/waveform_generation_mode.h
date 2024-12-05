@@ -17,7 +17,7 @@ typedef enum WaveformGenerationMode_e
 } WaveformGenerationMode_t;
 
 bool wgm_is_valid_waveform_gen_mode (WaveformGenerationMode_t w);
-void wgm_set_waveform_gen_mode (PMWTimerCntr_t *pmw,
+void wgm_set_waveform_gen_mode (PWMTimerCntr_t *pmw,
                                 WaveformGenerationMode_t w);
 
 #endif /* _WAVEFORM_GENERATION_MODE_H_ */

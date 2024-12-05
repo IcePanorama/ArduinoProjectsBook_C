@@ -45,7 +45,7 @@ static bool is_valid_timer (TimerCounterSelect_t t);
 static void get_control_regs_from_selection (TimerCounterSelect_t t,
                                              uint16_t *ctrl_reg_a,
                                              uint16_t *ctrl_reg_b);
-static void set_force_output_compare_bits (PMWTimerCntr_t *pmw,
+static void set_force_output_compare_bits (PWMTimerCntr_t *pwm,
                                            WaveformGenerationMode_t w,
                                            bool force_output_cmp_a,
                                            bool force_output_cmp_b);
@@ -64,19 +64,19 @@ pwm_init (TimerCounterSelect_t timer,
       return -1;
     }
 
-  PMWTimerCntr_t pmw;
-  get_control_regs_from_selection (timer, &pmw.control_register_a,
-                                   &pmw.control_register_b);
+  PWMTimerCntr_t pwm;
+  get_control_regs_from_selection (timer, &pwm.control_register_a,
+                                   &pwm.control_register_b);
   /*
    *  Doing this first as "this bit must be set to zero when
    *  [TCNTR0_CONTROL_REGISTER_B] is written when operating in PWM mode."
    *  (pg. 86, ATmega328P data sheet).
    */
-  set_force_output_compare_bits (&pmw, waveform_gen_mode, force_output_cmp_a,
+  set_force_output_compare_bits (&pwm, waveform_gen_mode, force_output_cmp_a,
                                  force_output_cmp_b);
-  wgm_set_waveform_gen_mode (&pmw, waveform_gen_mode);
-  cmp_set_cmp_output_mode (&pmw, waveform_gen_mode, cmp_output_mode);
-  clk_set_clk_select_mode_bits (&pmw, prescale);
+  wgm_set_waveform_gen_mode (&pwm, waveform_gen_mode);
+  cmp_set_cmp_output_mode (&pwm, waveform_gen_mode, cmp_output_mode);
+  clk_set_clk_select_mode_bits (&pwm, timer, prescale);
 
   enable_tcntr (timer);
   return 0;
@@ -114,7 +114,7 @@ validate_init_input (TimerCounterSelect_t t, WaveformGenerationMode_t w,
                         "mode and force output compare flag.\r\n");
       return -1;
     }
-  else if (!clk_is_valid_clock_select (s))
+  else if (!clk_is_valid_clock_select (t, s))
     {
       uart_send_string ("Error: Invalid clock prescaler provided!\r\n");
       return -1;
@@ -159,7 +159,7 @@ get_control_regs_from_selection (TimerCounterSelect_t t, uint16_t *ctrl_reg_a,
 }
 
 void
-set_force_output_compare_bits (PMWTimerCntr_t *pmw, WaveformGenerationMode_t w,
+set_force_output_compare_bits (PWMTimerCntr_t *pwm, WaveformGenerationMode_t w,
                                bool force_output_cmp_a,
                                bool force_output_cmp_b)
 {
@@ -168,21 +168,21 @@ set_force_output_compare_bits (PMWTimerCntr_t *pmw, WaveformGenerationMode_t w,
     case WGM_MODE_0:
     case WGM_MODE_2:
       if (force_output_cmp_a)
-        pmw->control_register_b |= (1 << (FORCE_OUTPUT_COMPARE_A_BIT));
+        pwm->control_register_b |= (1 << (FORCE_OUTPUT_COMPARE_A_BIT));
       else if (!force_output_cmp_a)
-        pmw->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_A_BIT));
+        pwm->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_A_BIT));
 
       if (force_output_cmp_b)
-        pmw->control_register_b |= (1 << (FORCE_OUTPUT_COMPARE_B_BIT));
+        pwm->control_register_b |= (1 << (FORCE_OUTPUT_COMPARE_B_BIT));
       else if (!force_output_cmp_b)
-        pmw->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_B_BIT));
+        pwm->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_B_BIT));
       break;
     case WGM_MODE_1:
     case WGM_MODE_5:
     case WGM_MODE_3:
     case WGM_MODE_7:
-      pmw->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_A_BIT));
-      pmw->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_B_BIT));
+      pwm->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_A_BIT));
+      pwm->control_register_b &= ~(1 << (FORCE_OUTPUT_COMPARE_B_BIT));
       break;
     }
 }
