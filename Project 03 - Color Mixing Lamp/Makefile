@@ -24,13 +24,20 @@ SRC = $(SRC_DIR)/adc.c \
       $(SRC_DIR)/analog_input.c \
       $(SRC_DIR)/lamp.c \
       $(SRC_DIR)/main.c \
-      $(SRC_DIR)/pwm_hal.c \
-      $(SRC_DIR)/uart_hal.c
+      $(SRC_DIR)/uart_hal.c \
+      $(SRC_DIR)/pwm/clock_select.c \
+      $(SRC_DIR)/pwm/compare_output_mode.c \
+      $(SRC_DIR)/pwm/pwm_hal.c \
+      $(SRC_DIR)/pwm/waveform_generation_mode.c
 INCL = $(INCL_DIR)/adc.h \
        $(INCL_DIR)/analog_input.h \
        $(INCL_DIR)/lamp.h \
-       $(INCL_DIR)/pwm_hal.h \
-       $(INCL_DIR)/uart_hal.h
+       $(INCL_DIR)/uart_hal.h \
+       $(INCL_DIR)/pwm/clock_select.h \
+       $(INCL_DIR)/pwm/compare_output_mode.h \
+       $(INCL_DIR)/pwm/pwm_hal.h \
+       $(INCL_DIR)/pwm/pwm_timer_cntr.h \
+       $(INCL_DIR)/pwm/waveform_generation_mode.h
 BIN = $(TARGET).bin
 HEX = $(TARGET).hex
 
